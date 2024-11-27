@@ -1,0 +1,25 @@
+{
+  "name": "shahil/msgraph",
+  "description": "A Laravel package for Microsoft Graph API Teams Message integration.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Shahil\\MSGraph\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Shahil\\MSGraph\\Providers\\MSGraphServiceProvider"
+      ],
+      "aliases": {
+        "MSGraph": "Shahil\\MSGraph\\Facades\\MSGraph"
+      }
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "illuminate/support": "^9.0|^10.0"
+  }
+}
