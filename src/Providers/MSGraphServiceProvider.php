@@ -26,6 +26,6 @@ class MSGraphServiceProvider extends ServiceProvider
         // Publish configuration
         $this->publishes([
             __DIR__ . '/../config/msgraph.php' => config_path('msgraph.php'),
-        ], 'config');
+        ], 'msgraph-config'); // Use 'msgraph-config' to match the command tag
     }
 }
