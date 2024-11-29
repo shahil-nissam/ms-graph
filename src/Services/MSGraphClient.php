@@ -56,30 +56,36 @@ class MSGraphClient
         }
     }
 
-
+    // if there are large number of chat histories then this function ll behave slow. Added pagination
     public function getChatIdByGroupName($groupName)
     {
         $token = $this->getMicrosoftToken();
+        $url = "https://graph.microsoft.com/v1.0/me/chats";
 
-        // Fetch all chats
-        $response = Http::withToken($token)->get("https://graph.microsoft.com/v1.0/me/chats");
+        do {
+            // Fetch the current batch of chats
+            $response = Http::withToken($token)->get($url);
 
-        if ($response->successful()) {
-            $chats = $response->json()['value'];
+            if ($response->successful()) {
+                $data = $response->json();
+                $chats = $data['value'];
 
-            // Search for the chat by name
-            foreach ($chats as $chat) {
-                if (isset($chat['topic']) && $chat['topic'] === $groupName) {
-                    return $chat['id']; // Return the chatId if found
+                // Search for the chat by name
+                foreach ($chats as $chat) {
+                    if (isset($chat['topic']) && $chat['topic'] === $groupName) {
+                        return $chat['id']; // Return the chatId if found
+                    }
                 }
+
+                // Check for next page of results
+                $url = $data['@odata.nextLink'] ?? null;
+            } else {
+                throw new \Exception("Failed to retrieve chats: " . $response->body());
             }
+        } while ($url);
 
-            throw new \Exception("Chat with name '{$groupName}' not found.");
-        } else {
-            throw new \Exception("Failed to retrieve chats: " . $response->body());
-        }
+        throw new \Exception("Chat with name '{$groupName}' not found.");
     }
-
 
     function getChatId($targetUserId)
     {
